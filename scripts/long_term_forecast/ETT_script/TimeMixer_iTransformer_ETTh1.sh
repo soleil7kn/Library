@@ -1,7 +1,7 @@
-#export PYTHONHASHSEED=2023
-#export CUBLAS_WORKSPACE_CONFIG=:4096:8
-#export OMP_NUM_THREADS=1
-#export MKL_NUM_THREADS=1
+export PYTHONHASHSEED=2026
+export CUBLAS_WORKSPACE_CONFIG=:4096:8
+export OMP_NUM_THREADS=1
+export MKL_NUM_THREADS=1
 
 export CUDA_VISIBLE_DEVICES=0
 
@@ -48,6 +48,7 @@ python -u run.py \
   --train_epochs $train_epochs \
   --patience $patience \
   --batch_size 128 \
+  --num_workers 0 \
   --down_sampling_layers $down_sampling_layers \
   --down_sampling_method avg \
   --down_sampling_window $down_sampling_window \
@@ -82,6 +83,7 @@ python -u run.py \
   --train_epochs $train_epochs \
   --patience $patience \
   --batch_size 128 \
+  --num_workers 0 \
   --down_sampling_layers $down_sampling_layers \
   --down_sampling_method avg \
   --down_sampling_window $down_sampling_window \
@@ -116,6 +118,7 @@ python -u run.py \
   --train_epochs $train_epochs \
   --patience $patience \
   --batch_size 128 \
+  --num_workers 0 \
   --down_sampling_layers $down_sampling_layers \
   --down_sampling_method avg \
   --down_sampling_window $down_sampling_window \
@@ -150,6 +153,7 @@ python -u run.py \
   --train_epochs $train_epochs \
   --patience $patience \
   --batch_size 128 \
+  --num_workers 0 \
   --down_sampling_layers $down_sampling_layers \
   --down_sampling_method avg \
   --down_sampling_window $down_sampling_window \
