@@ -35,7 +35,7 @@ python -u run.py \
   --learning_rate $learning_rate \
   --train_epochs $train_epochs \
   --patience $patience \
-  --batch_size 16 \
+  --batch_size 128 \
   --down_sampling_layers $down_sampling_layers \
   --down_sampling_method avg \
   --down_sampling_window $down_sampling_window
@@ -63,7 +63,7 @@ python -u run.py \
   --learning_rate $learning_rate \
   --train_epochs $train_epochs \
   --patience $patience \
-  --batch_size 16 \
+  --batch_size 128 \
   --down_sampling_layers $down_sampling_layers \
   --down_sampling_method avg \
   --down_sampling_window $down_sampling_window
@@ -91,7 +91,7 @@ python -u run.py \
   --learning_rate $learning_rate \
   --train_epochs $train_epochs \
   --patience $patience \
-  --batch_size 16 \
+  --batch_size 128 \
   --down_sampling_layers $down_sampling_layers \
   --down_sampling_method avg \
   --down_sampling_window $down_sampling_window
@@ -119,7 +119,7 @@ python -u run.py \
   --learning_rate $learning_rate \
   --train_epochs $train_epochs \
   --patience $patience \
-  --batch_size 16 \
+  --batch_size 128 \
   --down_sampling_layers $down_sampling_layers \
   --down_sampling_method avg \
   --down_sampling_window $down_sampling_window
