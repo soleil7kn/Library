@@ -1,4 +1,4 @@
-export CUDA_VISIBLE_DEVICES=0
+#export CUDA_VISIBLE_DEVICES=0
 
 model_name=TimeMixer
 
@@ -14,7 +14,7 @@ batch_size=16
 python -u run.py \
   --task_name long_term_forecast \
   --is_training 1 \
-  --root_path  ./dataset/ETT-small/\
+  --root_path  ../dataset/ETT-small/\
   --data_path ETTh2.csv \
   --model_id ETTh2_$seq_len'_'96 \
   --model $model_name \
