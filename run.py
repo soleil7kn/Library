@@ -158,6 +158,13 @@ if __name__ == '__main__':
 
     # TimeMixer_iTransformer
     parser.add_argument(
+    '--use_future_temporal_feature',
+    type=int,
+    default=0,
+    help='whether to use future temporal features'
+    )
+    
+    parser.add_argument(
     '--refiner_d_model',
     type=int,
     default=64,
