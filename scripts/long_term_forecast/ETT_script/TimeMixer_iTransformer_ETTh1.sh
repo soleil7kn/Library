@@ -55,7 +55,7 @@ python -u run.py \
   --refiner_d_model $refiner_d_model \
   --refiner_n_heads $refiner_n_heads \
   --refiner_d_ff $refiner_d_ff \
-  --refiner_e_layers $refiner_e_layers \
+  --refiner_e_layers $refiner_e_layers 
 
 
 python -u run.py \
@@ -89,7 +89,7 @@ python -u run.py \
   --refiner_d_model $refiner_d_model \
   --refiner_n_heads $refiner_n_heads \
   --refiner_d_ff $refiner_d_ff \
-  --refiner_e_layers $refiner_e_layers \
+  --refiner_e_layers $refiner_e_layers 
 
 
 python -u run.py \
@@ -123,7 +123,7 @@ python -u run.py \
   --refiner_d_model $refiner_d_model \
   --refiner_n_heads $refiner_n_heads \
   --refiner_d_ff $refiner_d_ff \
-  --refiner_e_layers $refiner_e_layers \
+  --refiner_e_layers $refiner_e_layers 
 
 
 python -u run.py \
@@ -157,7 +157,7 @@ python -u run.py \
   --refiner_d_model $refiner_d_model \
   --refiner_n_heads $refiner_n_heads \
   --refiner_d_ff $refiner_d_ff \
-  --refiner_e_layers $refiner_e_layers \
+  --refiner_e_layers $refiner_e_layers 
 
 """
 python -u run.py \

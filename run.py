@@ -163,7 +163,7 @@ if __name__ == '__main__':
     default=0,
     help='whether to use future temporal features'
     )
-    
+
     parser.add_argument(
     '--refiner_d_model',
     type=int,
@@ -192,6 +192,13 @@ if __name__ == '__main__':
         help='number of encoder layers in iTransformer refiner'
     )
 
+    parser.add_argument(
+        '--output_attention',
+        action='store_true',
+        default=False,
+        help='whether to output attention weights'
+    )
+    
     args = parser.parse_args()
     if torch.cuda.is_available() and args.use_gpu:
         args.device = torch.device('cuda:{}'.format(args.gpu))
