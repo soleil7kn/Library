@@ -35,7 +35,7 @@ python -u run.py \
   --learning_rate $learning_rate \
   --train_epochs $train_epochs \
   --patience $patience \
-  --batch_size 128 \
+  --batch_size 16 \
   --down_sampling_layers $down_sampling_layers \
   --down_sampling_method avg \
   --down_sampling_window $down_sampling_window
@@ -63,7 +63,7 @@ python -u run.py \
   --learning_rate $learning_rate \
   --train_epochs $train_epochs \
   --patience $patience \
-  --batch_size 128 \
+  --batch_size 16 \
   --down_sampling_layers $down_sampling_layers \
   --down_sampling_method avg \
   --down_sampling_window $down_sampling_window
@@ -91,7 +91,7 @@ python -u run.py \
   --learning_rate $learning_rate \
   --train_epochs $train_epochs \
   --patience $patience \
-  --batch_size 128 \
+  --batch_size 16 \
   --down_sampling_layers $down_sampling_layers \
   --down_sampling_method avg \
   --down_sampling_window $down_sampling_window
@@ -100,7 +100,7 @@ python -u run.py \
 python -u run.py \
   --task_name long_term_forecast \
   --is_training 1 \
-  --root_path ./dataset/ETT-small/ \
+  --root_path ../dataset/ETT-small/ \
   --data_path ETTh1.csv \
   --model_id ETTh1_$seq_len'_'720 \
   --model $model_name \
@@ -119,7 +119,7 @@ python -u run.py \
   --learning_rate $learning_rate \
   --train_epochs $train_epochs \
   --patience $patience \
-  --batch_size 128 \
+  --batch_size 16 \
   --down_sampling_layers $down_sampling_layers \
   --down_sampling_method avg \
   --down_sampling_window $down_sampling_window
