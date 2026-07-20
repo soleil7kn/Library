@@ -7,10 +7,28 @@ import random
 import numpy as np
 
 if __name__ == '__main__':
+
+    #fix_seed = 2026
+    #random.seed(fix_seed)
+    #torch.manual_seed(fix_seed)
+    #np.random.seed(fix_seed)
+
     fix_seed = 2026
+
     random.seed(fix_seed)
-    torch.manual_seed(fix_seed)
     np.random.seed(fix_seed)
+
+    torch.manual_seed(fix_seed)
+    torch.cuda.manual_seed(fix_seed)
+    torch.cuda.manual_seed_all(fix_seed)
+
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+    torch.backends.cuda.matmul.allow_tf32 = False
+    torch.backends.cudnn.allow_tf32 = False
+
+    torch.use_deterministic_algorithms(True)
 
     parser = argparse.ArgumentParser(description='TimesNet')
 
