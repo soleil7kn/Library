@@ -156,6 +156,35 @@ if __name__ == '__main__':
     parser.add_argument('--top_p', type=float, default=0.5, help='Dynamic Routing in MoE')
     parser.add_argument('--pos', type=int, choices=[0, 1], default=1, help='Positional Embedding. Set pos to 0 or 1')
 
+    # TimeMixer_iTransformer
+    parser.add_argument(
+    '--refiner_d_model',
+    type=int,
+    default=64,
+    help='embedding dimension of iTransformer refiner'
+    )
+
+    parser.add_argument(
+        '--refiner_n_heads',
+        type=int,
+        default=4,
+        help='number of attention heads in iTransformer refiner'
+    )
+
+    parser.add_argument(
+        '--refiner_d_ff',
+        type=int,
+        default=128,
+        help='feed-forward dimension of iTransformer refiner'
+    )
+
+    parser.add_argument(
+        '--refiner_e_layers',
+        type=int,
+        default=1,
+        help='number of encoder layers in iTransformer refiner'
+    )
+
     args = parser.parse_args()
     if torch.cuda.is_available() and args.use_gpu:
         args.device = torch.device('cuda:{}'.format(args.gpu))
