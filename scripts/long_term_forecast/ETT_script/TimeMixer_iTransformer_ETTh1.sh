@@ -51,7 +51,6 @@ python -u run.py \
   --down_sampling_layers $down_sampling_layers \
   --down_sampling_method avg \
   --down_sampling_window $down_sampling_window \
-  # TimeMixer_iTransformer用のパラメータ
   --use_future_temporal_feature 0 \
   --refiner_d_model $refiner_d_model \
   --refiner_n_heads $refiner_n_heads \
@@ -86,7 +85,6 @@ python -u run.py \
   --down_sampling_layers $down_sampling_layers \
   --down_sampling_method avg \
   --down_sampling_window $down_sampling_window \
-  # TimeMixer_iTransformer用のパラメータ
   --use_future_temporal_feature 0 \
   --refiner_d_model $refiner_d_model \
   --refiner_n_heads $refiner_n_heads \
@@ -121,7 +119,6 @@ python -u run.py \
   --down_sampling_layers $down_sampling_layers \
   --down_sampling_method avg \
   --down_sampling_window $down_sampling_window \
-  # TimeMixer_iTransformer用のパラメータ
   --use_future_temporal_feature 0 \
   --refiner_d_model $refiner_d_model \
   --refiner_n_heads $refiner_n_heads \
@@ -156,7 +153,6 @@ python -u run.py \
   --down_sampling_layers $down_sampling_layers \
   --down_sampling_method avg \
   --down_sampling_window $down_sampling_window \
-  # TimeMixer_iTransformer用のパラメータ
   --use_future_temporal_feature 0 \
   --refiner_d_model $refiner_d_model \
   --refiner_n_heads $refiner_n_heads \
