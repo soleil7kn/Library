@@ -16,7 +16,7 @@ batch_size=16
 python -u run.py \
   --task_name long_term_forecast \
   --is_training 1 \
-  --root_path  ./dataset/ETT-small/\
+  --root_path  ../dataset/ETT-small/\
   --data_path ETTh1.csv \
   --model_id ETTh1_$seq_len'_'96 \
   --model $model_name \
@@ -44,7 +44,7 @@ python -u run.py \
 python -u run.py \
   --task_name long_term_forecast \
   --is_training 1 \
-  --root_path ./dataset/ETT-small/ \
+  --root_path ../dataset/ETT-small/ \
   --data_path ETTh1.csv \
   --model_id ETTh1_$seq_len'_'192 \
   --model $model_name \
@@ -72,7 +72,7 @@ python -u run.py \
 python -u run.py \
   --task_name long_term_forecast \
   --is_training 1 \
-  --root_path ./dataset/ETT-small/ \
+  --root_path ../dataset/ETT-small/ \
   --data_path ETTh1.csv \
   --model_id ETTh1_$seq_len'_'336 \
   --model $model_name \
