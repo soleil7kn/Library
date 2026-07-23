@@ -42,10 +42,8 @@ python -u run.py \
   --itr 1 \
   --d_model $d_model \
   --d_ff $d_ff \
+  --batch_size $batch_size \
   --learning_rate $learning_rate \
-  --train_epochs $train_epochs \
-  --patience $patience \
-  --batch_size 128 \
   --num_workers 0 \
   --down_sampling_layers $down_sampling_layers \
   --down_sampling_method avg \
@@ -77,10 +75,8 @@ python -u run.py \
   --itr 1 \
   --d_model $d_model \
   --d_ff $d_ff \
+  --batch_size $batch_size \
   --learning_rate $learning_rate \
-  --train_epochs $train_epochs \
-  --patience $patience \
-  --batch_size 128 \
   --num_workers 0 \
   --down_sampling_layers $down_sampling_layers \
   --down_sampling_method avg \
@@ -112,10 +108,8 @@ python -u run.py \
   --itr 1 \
   --d_model $d_model \
   --d_ff $d_ff \
+  --batch_size $batch_size \
   --learning_rate $learning_rate \
-  --train_epochs $train_epochs \
-  --patience $patience \
-  --batch_size 128 \
   --num_workers 0 \
   --down_sampling_layers $down_sampling_layers \
   --down_sampling_method avg \
@@ -147,10 +141,8 @@ python -u run.py \
   --itr 1 \
   --d_model $d_model \
   --d_ff $d_ff \
+  --batch_size $batch_size \
   --learning_rate $learning_rate \
-  --train_epochs $train_epochs \
-  --patience $patience \
-  --batch_size 128 \
   --num_workers 0 \
   --down_sampling_layers $down_sampling_layers \
   --down_sampling_method avg \
