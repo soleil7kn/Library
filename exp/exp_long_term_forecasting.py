@@ -237,6 +237,7 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                         )
                 # ===== ここまで =====
 
+                """
                 # ===== Attention確認用：ここから追加 =====
                 # Attentionの取得
                 if hasattr(self.model, "module"):
@@ -280,6 +281,7 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                     attention_count_by_layer[layer_idx] += batch_head_count
                     # ===== ここまで =====
 
+
                     # 正規化エントロピー
                     P_safe = P.clamp_min(1e-12)
                     entropy = -(P * P_safe.log()).sum(dim=-1)
@@ -301,6 +303,7 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                         sample_time_mass.cpu().numpy()
                     )
                 # ===== Attention確認用：ここまで =====
+                """
 
                 f_dim = -1 if self.args.features == 'MS' else 0
                 outputs = outputs[:, -self.args.pred_len:, :]
