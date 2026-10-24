@@ -196,6 +196,30 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                 else:
                     outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
 
+                # ===== Attention確認用：ここから追加 =====
+                if i == 0:  # 最初のバッチだけ確認する
+                    if hasattr(self.model, "module"):
+                        model_for_attention = self.model.module
+                    else:
+                        model_for_attention = self.model
+
+                    attn = model_for_attention.last_attns[0]
+                    
+                    print("Attention shape:", attn.shape)
+
+                    # 最初のサンプル・最初のヘッドのAttention行列
+                    attn_matrix = attn[0, 0].detach().cpu().numpy()
+
+                    print("Attention matrix:")
+                    print(attn_matrix)
+
+                    # ファイルに保存
+                    np.save(
+                        os.path.join(folder_path, "attention_matrix.npy"),
+                        attn_matrix
+                    )
+                # ===== Attention確認用：ここまで =====
+
                 f_dim = -1 if self.args.features == 'MS' else 0
                 outputs = outputs[:, -self.args.pred_len:, :]
                 batch_y = batch_y[:, -self.args.pred_len:, :].to(self.device)
