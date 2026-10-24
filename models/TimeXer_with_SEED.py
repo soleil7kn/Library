@@ -316,6 +316,10 @@ class Model(nn.Module):
 
         # x_enc: [B, T, C] -> spectral evaluator expects [B, C, T].
         spectral_entropy = self.dependency_evaluator(x_enc.permute(0, 2, 1))
+
+        # 追加：計算したスペクトルエントロピーを保持
+        self.last_spectral_entropy = spectral_entropy.detach()
+
         if multi_series:
             # features='M': one weight for each variable/global token.
             return spectral_entropy

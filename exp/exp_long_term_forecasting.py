@@ -183,6 +183,8 @@ class Exp_Long_Term_Forecast(Exp_Basic):
         entropy_by_layer = {}
         time_mass_by_layer = {}
 
+        spectral_entropy_records = []
+
         # 全テストサンプル・全ヘッドの平均Attention行列を集計
         attention_sum_by_layer = {}
         attention_count_by_layer = {}
@@ -204,6 +206,36 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                         outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
                 else:
                     outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
+
+                # ===== スペクトルエントロピーを収集 =====
+                if hasattr(self.model, "module"):
+                    model_for_logging = self.model.module
+                else:
+                    model_for_logging = self.model
+
+                if hasattr(model_for_logging, "last_spectral_entropy"):
+                    spectral_entropy = (
+                        model_for_logging.last_spectral_entropy
+                        .detach()
+                        .float()
+                        .cpu()
+                        .numpy()
+                    )
+
+                    for b in range(spectral_entropy.shape[0]):
+                        for v in range(spectral_entropy.shape[1]):
+                            spectral_entropy_records.append([
+                                i * self.args.batch_size + b,
+                                v,
+                                float(spectral_entropy[b, v])
+                            ])
+                else:
+                    if i == 0:
+                        print(
+                            "Warning: last_spectral_entropy が見つかりません。"
+                            "モデル側の保存処理を確認してください。"
+                        )
+                # ===== ここまで =====
 
                 # ===== Attention確認用：ここから追加 =====
                 # Attentionの取得
@@ -300,6 +332,26 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                     visual(gt, pd, os.path.join(folder_path, str(i) + '.pdf'))
 
         import csv
+
+        # ===== スペクトルエントロピーをCSVに保存 =====
+        spectral_entropy_path = os.path.join(
+            folder_path,
+            "spectral_entropy_values.csv"
+        )
+
+        with open(spectral_entropy_path, "w", newline="") as f:
+            writer = csv.writer(f)
+
+            writer.writerow([
+                "window_index",
+                "variable_index",
+                "spectral_entropy"
+            ])
+
+            writer.writerows(spectral_entropy_records)
+
+        print(f"Spectral entropy saved to: {spectral_entropy_path}")
+        # ===== ここまで =====
 
         # ===== 平均Attention行列を保存 =====
         for layer_idx in sorted(attention_sum_by_layer):
