@@ -178,6 +178,11 @@ class Exp_Long_Term_Forecast(Exp_Basic):
             os.makedirs(folder_path)
 
         self.model.eval()
+
+        # Attention entropyを層ごとに保存する
+        entropy_by_layer = {}
+        time_mass_by_layer = {}
+
         with torch.no_grad():
             for i, (batch_x, batch_y, batch_x_mark, batch_y_mark) in enumerate(test_loader):
                 batch_x = batch_x.float().to(self.device)
@@ -197,28 +202,49 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                     outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
 
                 # ===== Attention確認用：ここから追加 =====
-                if i == 0:  # 最初のバッチだけ確認する
-                    if hasattr(self.model, "module"):
-                        model_for_attention = self.model.module
-                    else:
-                        model_for_attention = self.model
+                # Attentionの取得
+                if hasattr(self.model, "module"):
+                    model_for_attention = self.model.module
+                else:
+                    model_for_attention = self.model
 
-                    attn = model_for_attention.last_attns[0]
+                attns = model_for_attention.last_attns
 
-                    # 最初のサンプル・最初のAttention head
-                    attn_matrix = attn[0, 0].detach().cpu().numpy()
+                n_vars = self.args.enc_in
 
-                    # 変数7個の領域だけを抽出
-                    n_vars = 7
-                    var_attn = attn_matrix[:n_vars, :n_vars]
+                for layer_idx, attn in enumerate(attns):
+                    if attn is None:
+                        continue
 
-                    print("Variable attention shape:", var_attn.shape)
-                    print(var_attn)
+                    # attn: [Batch, Heads, Tokens, Tokens]
+                    A = attn.detach().float()
 
-                    # ファイルに保存
-                    np.save(
-                        os.path.join(folder_path, "attention_matrix.npy"),
-                        attn_matrix
+                    # 変数トークン同士のAttentionを抽出
+                    A_var = A[..., :n_vars, :n_vars]
+
+                    # 変数間Attentionを行ごとに再正規化
+                    row_sum = A_var.sum(dim=-1, keepdim=True)
+                    P = A_var / row_sum.clamp_min(1e-12)
+
+                    # 正規化エントロピー
+                    P_safe = P.clamp_min(1e-12)
+                    entropy = -(P * P_safe.log()).sum(dim=-1)
+                    entropy = entropy / np.log(n_vars)
+
+                    # 各サンプルについて、全head・全変数の平均を取る
+                    sample_entropy = entropy.mean(dim=(1, 2))
+
+                    entropy_by_layer.setdefault(layer_idx, []).append(
+                        sample_entropy.cpu().numpy()
+                    )
+
+                    # 変数クエリから時刻特徴量へのAttention合計
+                    A_time = A[..., :n_vars, n_vars:]
+                    time_mass = A_time.sum(dim=-1)
+                    sample_time_mass = time_mass.mean(dim=(1, 2))
+
+                    time_mass_by_layer.setdefault(layer_idx, []).append(
+                        sample_time_mass.cpu().numpy()
                     )
                 # ===== Attention確認用：ここまで =====
 
