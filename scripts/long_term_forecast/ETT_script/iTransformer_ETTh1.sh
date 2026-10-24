@@ -23,7 +23,8 @@ python -u run.py \
   --des 'Exp' \
   --d_model 128 \
   --d_ff 128 \
-  --itr 1
+  --itr 1 \
+  --output_attention
 
 python -u run.py \
   --task_name long_term_forecast \
@@ -46,7 +47,8 @@ python -u run.py \
   --des 'Exp' \
   --d_model 128 \
   --d_ff 128 \
-  --itr 1
+  --itr 1 \
+  --output_attention
 
 python -u run.py \
   --task_name long_term_forecast \
@@ -69,7 +71,8 @@ python -u run.py \
   --des 'Exp' \
   --d_model 128 \
   --d_ff 128 \
-  --itr 1
+  --itr 1 \
+  --output_attention
 
 python -u run.py \
   --task_name long_term_forecast \
@@ -92,4 +95,5 @@ python -u run.py \
   --des 'Exp' \
   --d_model 128 \
   --d_ff 128 \
-  --itr 1
+  --itr 1 \
+  --output_attention
