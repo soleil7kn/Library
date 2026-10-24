@@ -183,6 +183,10 @@ class Exp_Long_Term_Forecast(Exp_Basic):
         entropy_by_layer = {}
         time_mass_by_layer = {}
 
+        # 全テストサンプル・全ヘッドの平均Attention行列を集計
+        attention_sum_by_layer = {}
+        attention_count_by_layer = {}
+
         with torch.no_grad():
             for i, (batch_x, batch_y, batch_x_mark, batch_y_mark) in enumerate(test_loader):
                 batch_x = batch_x.float().to(self.device)
@@ -225,6 +229,24 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                     # 変数間Attentionを行ごとに再正規化
                     row_sum = A_var.sum(dim=-1, keepdim=True)
                     P = A_var / row_sum.clamp_min(1e-12)
+
+                        # ===== 平均Attention行列の集計 =====
+                    # Pの形状: [Batch, Heads, n_vars, n_vars]
+                    # バッチとヘッド方向に合計する
+                    batch_head_sum = P.sum(dim=(0, 1)).cpu().numpy()
+
+                    # バッチ数 × ヘッド数
+                    batch_head_count = P.shape[0] * P.shape[1]
+
+                    if layer_idx not in attention_sum_by_layer:
+                        attention_sum_by_layer[layer_idx] = np.zeros(
+                            (n_vars, n_vars), dtype=np.float64
+                        )
+                        attention_count_by_layer[layer_idx] = 0
+
+                    attention_sum_by_layer[layer_idx] += batch_head_sum
+                    attention_count_by_layer[layer_idx] += batch_head_count
+                    # ===== ここまで =====
 
                     # 正規化エントロピー
                     P_safe = P.clamp_min(1e-12)
@@ -278,6 +300,24 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                     visual(gt, pd, os.path.join(folder_path, str(i) + '.pdf'))
 
         import csv
+
+        # ===== 平均Attention行列を保存 =====
+        for layer_idx in sorted(attention_sum_by_layer):
+            mean_attention = (
+                attention_sum_by_layer[layer_idx]
+                / attention_count_by_layer[layer_idx]
+            )
+
+            save_path = os.path.join(
+                folder_path,
+                f"mean_attention_layer{layer_idx}.npy"
+            )
+            np.save(save_path, mean_attention)
+
+            print(f"Layer {layer_idx} mean Attention:")
+            print(mean_attention)
+            print(f"Saved to: {save_path}")
+        # ===== ここまで =====
 
         summary_path = os.path.join(
             folder_path, "attention_entropy_summary.csv"
