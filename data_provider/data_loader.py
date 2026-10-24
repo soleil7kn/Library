@@ -54,6 +54,7 @@ class Dataset_ETT_hour(Dataset):
             )
 
         df_raw = pd.read_csv(local_fp)
+        print("CSV columns:", df_raw.columns.tolist())
 
         border1s = [0, 12 * 30 * 24 - self.seq_len, 12 * 30 * 24 + 4 * 30 * 24 - self.seq_len]
         border2s = [12 * 30 * 24, 12 * 30 * 24 + 4 * 30 * 24, 12 * 30 * 24 + 8 * 30 * 24]
