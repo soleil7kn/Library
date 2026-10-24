@@ -204,14 +204,16 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                         model_for_attention = self.model
 
                     attn = model_for_attention.last_attns[0]
-                    
-                    print("Attention shape:", attn.shape)
 
-                    # 最初のサンプル・最初のヘッドのAttention行列
+                    # 最初のサンプル・最初のAttention head
                     attn_matrix = attn[0, 0].detach().cpu().numpy()
 
-                    print("Attention matrix:")
-                    print(attn_matrix)
+                    # 変数7個の領域だけを抽出
+                    n_vars = 7
+                    var_attn = attn_matrix[:n_vars, :n_vars]
+
+                    print("Variable attention shape:", var_attn.shape)
+                    print(var_attn)
 
                     # ファイルに保存
                     np.save(
