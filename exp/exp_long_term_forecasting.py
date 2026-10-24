@@ -277,6 +277,52 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                     pd = np.concatenate((input[0, :, -1], pred[0, :, -1]), axis=0)
                     visual(gt, pd, os.path.join(folder_path, str(i) + '.pdf'))
 
+        import csv
+
+        summary_path = os.path.join(
+            folder_path, "attention_entropy_summary.csv"
+        )
+
+        with open(summary_path, "w", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow([
+                "layer",
+                "mean_entropy",
+                "std_entropy",
+                "mean_time_attention_mass"
+            ])
+
+            for layer_idx in sorted(entropy_by_layer):
+                # 全テストサンプルを結合
+                ent = np.concatenate(entropy_by_layer[layer_idx])
+                mass = np.concatenate(time_mass_by_layer[layer_idx])
+
+                mean_entropy = ent.mean()
+                std_entropy = ent.std()
+                mean_mass = mass.mean()
+
+                print(f"Layer {layer_idx}:")
+                print(f"  Mean normalized entropy: {mean_entropy:.6f}")
+                print(f"  Std normalized entropy:  {std_entropy:.6f}")
+                print(f"  Mean time attention mass: {mean_mass:.6f}")
+
+                writer.writerow([
+                    layer_idx,
+                    mean_entropy,
+                    std_entropy,
+                    mean_mass
+                ])
+
+                np.save(
+                    os.path.join(
+                        folder_path,
+                        f"attention_entropy_layer{layer_idx}.npy"
+                    ),
+                    ent
+                )
+
+        print(f"Attention summary saved to: {summary_path}")
+
         preds = np.concatenate(preds, axis=0)
         trues = np.concatenate(trues, axis=0)
         print('test shape:', preds.shape, trues.shape)
