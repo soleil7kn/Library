@@ -363,6 +363,16 @@ class Model(nn.Module):
         x_enc, means, stdev = self._normalize(x_enc)
         dependency_weight = self._dependency_weight(x_enc, multi_series=True)
 
+        if dependency_weight is not None:
+            with torch.no_grad():
+                w = dependency_weight.detach()
+                print(
+                    f"gate_mean={w.mean().item():.4f}, "
+                    f"gate_std={w.std().item():.4f}, "
+                    f"gate_min={w.min().item():.4f}, "
+                    f"gate_max={w.max().item():.4f}"
+                )
+
         en_embed, n_vars = self.en_embedding(x_enc.permute(0, 2, 1))
         ex_embed = self.ex_embedding(x_enc, x_mark_enc)
 
