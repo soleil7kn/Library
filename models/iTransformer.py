@@ -26,7 +26,7 @@ class Model(nn.Module):
                 EncoderLayer(
                     AttentionLayer(
                         FullAttention(False, configs.factor, attention_dropout=configs.dropout,
-                                      output_attention=True), configs.d_model, configs.n_heads),
+                                      output_attention=False), configs.d_model, configs.n_heads),
                     configs.d_model,
                     configs.d_ff,
                     dropout=configs.dropout,
@@ -56,19 +56,9 @@ class Model(nn.Module):
 
         _, _, N = x_enc.shape
 
-        # x_enc: [Batch, Sequence length, Variables]
-        if not hasattr(self, "_printed_input_shape"):
-            print("x_enc shape:", x_enc.shape)
-            print("x_mark_enc shape:",
-                None if x_mark_enc is None else x_mark_enc.shape)
-            self._printed_input_shape = True
-            
         # Embedding
         enc_out = self.enc_embedding(x_enc, x_mark_enc)
         enc_out, attns = self.encoder(enc_out, attn_mask=None)
-
-        # Attentionをモデル内に保存
-        self.last_attns = attns
 
         dec_out = self.projection(enc_out).permute(0, 2, 1)[:, :, :N]
         # De-Normalization from Non-stationary Transformer
