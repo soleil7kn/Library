@@ -23,7 +23,6 @@ python -u run.py \
   --des 'Exp' \
   --d_model 256 \
   --d_ff 1024 \
-  --batch_size 16 \
   --itr 1
 
 python -u run.py \
@@ -68,7 +67,6 @@ python -u run.py \
   --des 'Exp' \
   --d_model 512 \
   --d_ff 1024 \
-  --batch_size 4 \
   --itr 1
 
 python -u run.py \
@@ -91,5 +89,4 @@ python -u run.py \
   --des 'Exp' \
   --d_model 256 \
   --d_ff 1024 \
-  --batch_size 16 \
   --itr 1
