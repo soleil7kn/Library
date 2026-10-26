@@ -21,7 +21,6 @@ python -u run.py \
   --dec_in 7 \
   --c_out 7 \
   --d_model 256 \
-  --batch_size 4 \
   --des 'exp' \
   --itr 1
 
@@ -45,7 +44,6 @@ python -u run.py \
   --c_out 7 \
   --des 'Exp' \
   --d_model 128 \
-  --batch_size 4 \
   --itr 1
 
 python -u run.py \
@@ -68,7 +66,6 @@ python -u run.py \
   --des 'Exp' \
   --d_model 512 \
   --d_ff 1024 \
-  --batch_size 16 \
   --itr 1
 
 python -u run.py \
@@ -91,5 +88,4 @@ python -u run.py \
   --des 'Exp' \
   --d_model 256 \
   --d_ff 1024 \
-  --batch_size 16 \
   --itr 1
