@@ -287,7 +287,6 @@ class Model(nn.Module):
             head_dropout=configs.dropout,
         )
 
-        """
         # Enabled by default. Set configs.use_dependency_evaluator=False for
         # a vanilla-TimeXer ablation without spectral-entropy gating.
         self.use_dependency_evaluator = getattr(
@@ -298,11 +297,10 @@ class Model(nn.Module):
             if self.use_dependency_evaluator
             else None
         )
-        """
-
+        
         # Disable spectral-entropy gating
-        self.use_dependency_evaluator = False
-        self.dependency_evaluator = None
+        #self.use_dependency_evaluator = False
+        #self.dependency_evaluator = None
 
     def _normalize(self, x_enc):
         """Apply TimeXer's per-series normalization, returning stats for denorm."""
