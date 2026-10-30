@@ -162,11 +162,19 @@ class MultiScaleDependencyEvaluator(nn.Module):
                 f"Expected seq_len={self.seq_len}, got {x.shape[-1]}"
             )
 
-        # Construct coarse-to-fine scales using AMD MDM's average pooling.
         scale_inputs = []
-        for pool in self.avg_pools:
-            scale_inputs.append(pool(x))
-        scale_inputs.append(x)
+
+        for factor in self.scale_factors:
+            if factor == 1:
+                scale_x = x
+            else:
+                scale_x = F.avg_pool1d(
+                    x,
+                    kernel_size=factor,
+                    stride=factor
+                )
+
+            scale_inputs.append(scale_x)
 
         entropy_list = []
         for scale_x, frequency_filter in zip(
