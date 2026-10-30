@@ -216,6 +216,13 @@ if __name__ == '__main__':
         default=False,
         help='whether to output attention weights'
     )
+
+    # 実験用
+    parser.add_argument(
+    '--se_scale_factor',
+    type=int,
+    default=None
+)
     
     args = parser.parse_args()
     if torch.cuda.is_available() and args.use_gpu:
