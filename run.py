@@ -13,7 +13,7 @@ if __name__ == '__main__':
     #torch.manual_seed(fix_seed)
     #np.random.seed(fix_seed)
 
-    fix_seed = 2026
+    fix_seed = 2025
 
     random.seed(fix_seed)
     np.random.seed(fix_seed)
