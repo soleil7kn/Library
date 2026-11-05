@@ -116,6 +116,12 @@ class MultiScaleDependencyEvaluator(nn.Module):
             for factor in self.scale_factors
         ])
 
+        # Analysis buffers: values from the most recent forward pass.
+        # Shape of last_scale_weights: [B, n_vars, n_scales].
+        self.last_scale_weights = None
+        self.last_scale_entropies = None
+        self.last_fused_entropy = None
+
         n_scales = len(self.scale_factors)
 
         if n_scales > 1:
@@ -194,6 +200,12 @@ class MultiScaleDependencyEvaluator(nn.Module):
             scale_weights = torch.ones_like(scale_entropies)
 
         fused_entropy = (scale_entropies * scale_weights).sum(dim=-1)
+
+        # Keep detached copies for analysis without retaining the computation graph.
+        # These are overwritten on every forward pass.
+        self.last_scale_weights = scale_weights.detach()
+        self.last_scale_entropies = scale_entropies.detach()
+        self.last_fused_entropy = fused_entropy.detach()
 
         if return_details:
             return fused_entropy, scale_entropies, scale_weights
