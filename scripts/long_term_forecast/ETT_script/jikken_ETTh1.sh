@@ -23,6 +23,7 @@ python -u run.py \
   --d_model 256 \
   --des 'exp' \
   --itr 1 \
+  --se_scale_factor 1
 
 
 python -u run.py \
@@ -45,6 +46,7 @@ python -u run.py \
   --des 'Exp' \
   --d_model 128 \
   --itr 1 \
+  --se_scale_factor 1
 
 python -u run.py \
   --task_name long_term_forecast \
@@ -67,6 +69,7 @@ python -u run.py \
   --d_model 512 \
   --d_ff 1024 \
   --itr 1 \
+  --se_scale_factor 1
 
 python -u run.py \
   --task_name long_term_forecast \
@@ -89,3 +92,4 @@ python -u run.py \
   --d_model 256 \
   --d_ff 1024 \
   --itr 1 \
+  --se_scale_factor 1
