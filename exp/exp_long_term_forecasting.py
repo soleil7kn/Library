@@ -173,6 +173,23 @@ class Exp_Long_Term_Forecast(Exp_Basic):
 
         preds = []
         trues = []
+
+        # ==========================================
+        # Scale weight collection
+        # ==========================================
+        scale_weights_list = []
+
+        # DataParallelへの対応
+        model_ref = (
+            self.model.module
+            if isinstance(self.model, nn.DataParallel)
+            else self.model
+        )
+
+        dependency_evaluator = getattr(
+            model_ref, 'dependency_evaluator', None
+        )
+
         folder_path = './test_results/' + setting + '/'
         if not os.path.exists(folder_path):
             os.makedirs(folder_path)
@@ -195,6 +212,22 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                         outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
                 else:
                     outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
+                
+                # ==========================================
+                # Collect scale weights
+                # ==========================================
+                if dependency_evaluator is not None:
+
+                    weights = getattr(
+                        dependency_evaluator,
+                        'last_scale_weights',
+                        None
+                    )
+
+                    if weights is not None:
+                        scale_weights_list.append(
+                            weights.detach().float().cpu().numpy()
+                        )
 
                 f_dim = -1 if self.args.features == 'MS' else 0
                 outputs = outputs[:, -self.args.pred_len:, :]
@@ -236,6 +269,118 @@ class Exp_Long_Term_Forecast(Exp_Basic):
         folder_path = './results/' + setting + '/'
         if not os.path.exists(folder_path):
             os.makedirs(folder_path)
+
+        # ==========================================
+        # Save scale weights
+        # ==========================================
+        if len(scale_weights_list) > 0:
+
+            # 全テストバッチを結合
+            all_scale_weights = np.concatenate(
+                scale_weights_list,
+                axis=0
+            )
+
+            # スケールの順番を取得
+            scale_factors = dependency_evaluator.scale_factors
+
+            if len(scale_factors) != all_scale_weights.shape[-1]:
+                raise ValueError(
+                    "scale_factors and scale_weights dimensions do not match."
+                )
+
+            # ------------------------------------------
+            # ① 全変数・全サンプルの平均重み
+            # ------------------------------------------
+            mean_scale_weights = all_scale_weights.mean(
+                axis=(0, 1)
+            )
+
+            scale_weight_path = os.path.join(
+                folder_path,
+                'scale_weights.csv'
+            )
+
+            scale_data = np.column_stack((
+                scale_factors,
+                mean_scale_weights
+            ))
+
+            np.savetxt(
+                scale_weight_path,
+                scale_data,
+                delimiter=',',
+                header='scale_factor,mean_weight',
+                comments='',
+                fmt=['%s', '%.8f']
+            )
+
+            # ------------------------------------------
+            # ② 変数ごとの平均重み
+            # ------------------------------------------
+            variable_mean_weights = all_scale_weights.mean(
+                axis=0
+            )
+
+            variable_path = os.path.join(
+                folder_path,
+                'scale_weights_by_variable.csv'
+            )
+
+            variable_header = (
+                'variable_index,' +
+                ','.join(
+                    f'scale_{factor}'
+                    for factor in scale_factors
+                )
+            )
+
+            variable_data = np.column_stack((
+                np.arange(variable_mean_weights.shape[0]),
+                variable_mean_weights
+            ))
+
+            np.savetxt(
+                variable_path,
+                variable_data,
+                delimiter=',',
+                header=variable_header,
+                comments='',
+                fmt=['%d'] + ['%.8f'] * len(scale_factors)
+            )
+
+            # ------------------------------------------
+            # ③ 全サンプルの重みも保存
+            # ------------------------------------------
+            np.save(
+                os.path.join(
+                    folder_path,
+                    'scale_weights_all.npy'
+                ),
+                all_scale_weights
+            )
+
+            print('\n========== Scale Weight Analysis ==========')
+            print('Mean scale weights:')
+
+            for factor, weight in zip(
+                scale_factors,
+                mean_scale_weights
+            ):
+                print(
+                    f'Scale {factor}: {weight:.6f}'
+                )
+
+            print('Saved:')
+            print(scale_weight_path)
+            print(variable_path)
+            print('============================================\n')
+
+        else:
+            print(
+                'WARNING: Scale weights were not collected. '
+                'Check dependency_evaluator.last_scale_weights.'
+            )
 
         # dtw calculation
         if self.args.use_dtw:
