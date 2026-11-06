@@ -25,6 +25,7 @@ python -u run.py \
   --d_ff 512 \
   --batch_size 4 \
   --itr 1 \
+  --se_scale_factor 1
 
 python -u run.py \
   --task_name long_term_forecast \
@@ -47,7 +48,8 @@ python -u run.py \
   --d_model 128 \
   --d_ff 1024 \
   --batch_size 4 \
-  --itr 1
+  --itr 1 \
+  --se_scale_factor 1
 
 python -u run.py \
   --task_name long_term_forecast \
@@ -69,7 +71,8 @@ python -u run.py \
   --des 'Exp' \
   --d_model 256 \
   --batch_size 4 \
-  --itr 1
+  --itr 1 \
+  --se_scale_factor 1
 
 python -u run.py \
   --task_name long_term_forecast \
@@ -91,4 +94,5 @@ python -u run.py \
   --des 'Exp' \
   --d_model 128 \
   --batch_size 4 \
-  --itr 1
+  --itr 1 \
+  --se_scale_factor 1
