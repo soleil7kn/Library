@@ -222,7 +222,10 @@ if __name__ == '__main__':
     '--se_scale_factor',
     type=int,
     default=None
-)
+    )
+
+    # ランダムシードの設定
+    parser.add_argument('--random_seed', type=int, default=2021)
     
     args = parser.parse_args()
     if torch.cuda.is_available() and args.use_gpu:
