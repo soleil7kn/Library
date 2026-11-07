@@ -13,8 +13,7 @@ if __name__ == '__main__':
     #torch.manual_seed(fix_seed)
     #np.random.seed(fix_seed)
 
-    args = parser.parse_args()
-
+    """
     # fix_seed = 2026
     fix_seed = args.random_seed
 
@@ -32,6 +31,7 @@ if __name__ == '__main__':
     torch.backends.cudnn.allow_tf32 = False
 
     torch.use_deterministic_algorithms(True)
+    """
 
     parser = argparse.ArgumentParser(description='TimesNet')
 
@@ -231,6 +231,34 @@ if __name__ == '__main__':
     parser.add_argument('--random_seed', type=int, default=2026)
     
     args = parser.parse_args()
+
+    # =====================================
+    # Fix random seed
+    # =====================================
+    fix_seed = args.random_seed
+
+    print(f"\n========== Random Seed: {fix_seed} ==========\n")
+
+    random.seed(fix_seed)
+    np.random.seed(fix_seed)
+
+    torch.manual_seed(fix_seed)
+    torch.cuda.manual_seed(fix_seed)
+    torch.cuda.manual_seed_all(fix_seed)
+
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+    torch.backends.cuda.matmul.allow_tf32 = False
+    torch.backends.cudnn.allow_tf32 = False
+
+    torch.use_deterministic_algorithms(True)
+
+    # 乱数が実際に変化しているか確認
+    print("Python random:", random.random())
+    print("NumPy random:", np.random.rand())
+    print("PyTorch random:", torch.rand(1).item())
+
     if torch.cuda.is_available() and args.use_gpu:
         args.device = torch.device('cuda:{}'.format(args.gpu))
         print('Using GPU')
