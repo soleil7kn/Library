@@ -162,7 +162,8 @@ class Exp_Long_Term_Forecast(Exp_Basic):
 
         best_model_path = path + '/' + 'checkpoint.pth'
         self.model.load_state_dict(torch.load(best_model_path))
-
+        
+        """
         # ==================================
         # Horizon-aware gate の学習済みalphaを取得
         # ==================================
@@ -182,6 +183,7 @@ class Exp_Long_Term_Forecast(Exp_Basic):
             f"alpha={alpha:.6f}",
             flush=True
         )
+        """
 
 
         return self.model
