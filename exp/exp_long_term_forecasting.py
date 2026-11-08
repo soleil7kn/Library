@@ -170,6 +170,19 @@ class Exp_Long_Term_Forecast(Exp_Basic):
         if test:
             print('loading model')
             self.model.load_state_dict(torch.load(os.path.join('./checkpoints/' + setting, 'checkpoint.pth')))
+            
+            # Horizon-aware gate の学習済みalphaを取得
+            model_ref = (
+                self.model.module
+                if isinstance(self.model, nn.DataParallel)
+                else self.model
+            )
+
+            alpha = torch.sigmoid(
+                model_ref.horizon_gate_logit
+            ).item()
+
+            print(f"Learned horizon gate alpha: {alpha:.6f}")
 
         preds = []
         trues = []
