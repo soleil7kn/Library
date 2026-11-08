@@ -415,6 +415,11 @@ class Model(nn.Module):
             if self.use_dependency_evaluator
             else None
         )
+
+        # Horizon-aware gate
+        self.horizon_gate_logit = nn.Parameter(
+            torch.tensor(0.0)
+        )
         
         # Disable spectral-entropy gating
         #self.use_dependency_evaluator = False
@@ -478,6 +483,12 @@ class Model(nn.Module):
     def forecast_multi(self, x_enc, x_mark_enc, x_dec, x_mark_dec):
         x_enc, means, stdev = self._normalize(x_enc)
         dependency_weight = self._dependency_weight(x_enc, multi_series=True)
+
+        if dependency_weight is not None:
+            horizon_gate = torch.sigmoid(
+                self.horizon_gate_logit
+            )
+            dependency_weight = dependency_weight * horizon_gate
 
         en_embed, n_vars = self.en_embedding(x_enc.permute(0, 2, 1))
         ex_embed = self.ex_embedding(x_enc, x_mark_enc)
