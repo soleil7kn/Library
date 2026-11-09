@@ -44,8 +44,6 @@ run_exp() {
         --des "seed${seed}"
         --random_seed "$seed"
         --itr 1
-        --use_revin True
-        --use_dropout 0.1
     )
 
     # 実行ログを保存しながら画面にも表示
