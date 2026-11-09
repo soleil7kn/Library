@@ -16,14 +16,11 @@ mkdir -p "$log_dir"
 run_exp() {
     local seed=$1
     local pred_len=$2
-    local e_layers=$3
-    local d_model=$4
-    local d_ff=${5:-}
 
     local log_file="${log_dir}/pred${pred_len}_seed${seed}.log"
 
     echo "--------------------------------------"
-    echo "seed=${seed}, pred_len=${pred_len}"
+    echo "Model=${model_name}, seed=${seed}, pred_len=${pred_len}"
     echo "--------------------------------------"
 
     args=(
@@ -38,21 +35,18 @@ run_exp() {
         --seq_len 96
         --label_len 48
         --pred_len "$pred_len"
-        --e_layers "$e_layers"
+        --e_layers 1
         --factor 3
         --enc_in 7
         --dec_in 7
         --c_out 7
-        --d_model "$d_model"
+        --d_model 256
         --des "seed${seed}"
         --random_seed "$seed"
         --itr 1
+        --use_revin True
+        --use_dropout 0.1
     )
-
-    # d_ffが指定されている場合だけ追加
-    if [[ -n "$d_ff" ]]; then
-        args+=(--d_ff "$d_ff")
-    fi
 
     # 実行ログを保存しながら画面にも表示
     python -u run.py "${args[@]}" 2>&1 | tee "$log_file"
@@ -66,17 +60,10 @@ do
     echo "Running experiments with seed: $seed"
     echo "======================================"
 
-    # pred_len = 96
-    run_exp "$seed" 96 1 256
-
-    # pred_len = 192
-    run_exp "$seed" 192 2 128
-
-    # pred_len = 336
-    run_exp "$seed" 336 1 512 1024
-
-    # pred_len = 720
-    run_exp "$seed" 720 1 256 1024
+    run_exp "$seed" 96
+    run_exp "$seed" 192
+    run_exp "$seed" 336
+    run_exp "$seed" 720
 
 done
 
@@ -85,6 +72,7 @@ done
 # --------------------------------------
 
 LOG_DIR="$log_dir" python - <<'PY'
+
 import os
 import re
 import glob
@@ -112,6 +100,7 @@ for file in sorted(glob.glob(os.path.join(log_dir, "*.log"))):
     mae = None
 
     with open(file, "r", encoding="utf-8", errors="ignore") as f:
+
         for line in f:
 
             mse_match = re.search(
@@ -141,18 +130,26 @@ for file in sorted(glob.glob(os.path.join(log_dir, "*.log"))):
         "MAE": mae
     })
 
+# --------------------------------------
 # 各シードの結果をCSVに保存
+# --------------------------------------
+
 detail_path = os.path.join(log_dir, "seed_results.csv")
 
 with open(detail_path, "w", newline="", encoding="utf-8-sig") as f:
+
     writer = csv.DictWriter(
         f,
         fieldnames=["pred_len", "seed", "MSE", "MAE"]
     )
+
     writer.writeheader()
     writer.writerows(results)
 
+# --------------------------------------
 # 予測長ごとに平均と標準偏差を計算
+# --------------------------------------
+
 summary = []
 
 for pred_len in [96, 192, 336, 720]:
@@ -172,14 +169,19 @@ for pred_len in [96, 192, 336, 720]:
         "pred_len": pred_len,
         "n_seeds": len(group),
         "MSE_mean": mse_values.mean(),
-        "MSE_std": mse_values.std(ddof=1) if len(group) > 1 else np.nan,
+        "MSE_std": mse_values.std(ddof=1) if len(mse_values) > 1 else np.nan,
         "MAE_mean": mae_values.mean(),
-        "MAE_std": mae_values.std(ddof=1) if len(group) > 1 else np.nan
+        "MAE_std": mae_values.std(ddof=1) if len(mae_values) > 1 else np.nan
     })
+
+# --------------------------------------
+# 集計結果をCSVに保存
+# --------------------------------------
 
 summary_path = os.path.join(log_dir, "seed_summary.csv")
 
 with open(summary_path, "w", newline="", encoding="utf-8-sig") as f:
+
     writer = csv.DictWriter(
         f,
         fieldnames=[
@@ -191,15 +193,20 @@ with open(summary_path, "w", newline="", encoding="utf-8-sig") as f:
             "MAE_std"
         ]
     )
+
     writer.writeheader()
     writer.writerows(summary)
 
+# --------------------------------------
 # 結果を画面にも表示
+# --------------------------------------
+
 print("\n======================================")
-print("       実験結果の集計")
+print("       SEED 実験結果の集計")
 print("======================================")
 
 for r in summary:
+
     print(
         f"pred_len={r['pred_len']}: "
         f"MSE={r['MSE_mean']:.6f} ± {r['MSE_std']:.6f}, "
