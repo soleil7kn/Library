@@ -69,7 +69,7 @@ do
     echo "======================================"
 
     # pred_len = 96
-    run_exp "$seed" 96 1 256
+    run_exp "$seed" 96 1 256 512
 
     # pred_len = 192
     run_exp "$seed" 192 3 128 1024
