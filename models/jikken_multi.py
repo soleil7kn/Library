@@ -417,7 +417,7 @@ class Model(nn.Module):
             )
         else:
             weights = scale_weights.flip(-1)  # coarse-to-fine -> fine-to-coarse
-        weighted = predictions * weights.permute(0, 2, 1).unsqueeze(1)
+        weighted = predictions * weights.unsqueeze(1)
         temporal_forecast = weighted.sum(dim=-1)
         return temporal_forecast
 
