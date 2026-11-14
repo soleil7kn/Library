@@ -42,7 +42,6 @@ run_exp() {
         --enc_in 321
         --dec_in 321
         --c_out 321
-        --batch_size 4
         --des "seed${seed}"
         --random_seed "$seed"
         --itr 1
@@ -57,8 +56,8 @@ run_exp() {
     python -u run.py "${args[@]}" 2>&1 | tee "$log_file"
 }
 
-# 5つの乱数シードで実験
-for seed in 2022 2023 2024 2025 2026
+# 1つの乱数シードで実験
+for seed in 2026
 do
 
     echo "======================================"
