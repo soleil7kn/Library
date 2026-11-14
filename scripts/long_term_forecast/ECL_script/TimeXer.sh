@@ -1,4 +1,4 @@
-```bash
+
 #!/bin/bash
 
 set -euo pipefail
@@ -211,4 +211,3 @@ print(detail_path)
 print(summary_path)
 
 PY
-```
