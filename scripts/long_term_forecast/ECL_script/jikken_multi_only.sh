@@ -46,6 +46,8 @@ run_exp() {
         --des "seed${seed}"
         --random_seed "$seed"
         --itr 1
+        --down_sampling_layers 3 
+        --down_sampling_window 2 
     )
 
     # d_ffが指定されている場合だけ追加
