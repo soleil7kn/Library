@@ -6,7 +6,7 @@ set -euo pipefail
 export CUDA_VISIBLE_DEVICES=0
 export CUBLAS_WORKSPACE_CONFIG=:4096:8
 
-model_name=TimeXer_with_SEED_sogo
+model_name=EADT
 
 # 実験ごとに異なるログ保存先を作成
 log_dir="logs/${model_name}_$(date +%Y%m%d_%H%M%S)"
@@ -30,10 +30,10 @@ run_exp() {
         --task_name long_term_forecast
         --is_training 1
         --root_path ../dataset/ETT-small/
-        --data_path ETTh1.csv
-        --model_id ETTh1_96_${pred_len}
+        --data_path ETTm2.csv
+        --model_id ETTm2_96_${pred_len}
         --model "$model_name"
-        --data ETTh1
+        --data ETTm2
         --features M
         --seq_len 96
         --label_len 48
@@ -70,13 +70,13 @@ do
     run_exp "$seed" 96 1 256
 
     # pred_len = 192
-    run_exp "$seed" 192 2 128
+    run_exp "$seed" 192 1 256 1024
 
     # pred_len = 336
     run_exp "$seed" 336 1 512 1024
 
     # pred_len = 720
-    run_exp "$seed" 720 1 256 1024
+    run_exp "$seed" 720 1 512
 
 done
 
