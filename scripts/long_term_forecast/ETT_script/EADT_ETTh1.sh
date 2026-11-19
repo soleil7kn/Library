@@ -1,7 +1,7 @@
 export CUDA_VISIBLE_DEVICES=0
 export CUBLAS_WORKSPACE_CONFIG=:4096:8
 
-model_name=TimeXer_multiscale_SpEn
+model_name=EADT
 
 python -u run.py \
   --task_name long_term_forecast \
