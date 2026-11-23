@@ -191,6 +191,20 @@ class Exp_Long_Term_Forecast(Exp_Basic):
         )
 
         folder_path = './test_results/' + setting + '/'
+
+        # ==========================================
+        # Entropy diagnostics collection
+        # ==========================================
+        collect_entropy = (
+            callable(getattr(model_ref, 'start_entropy_diagnostics_collection', None))
+            and callable(getattr(model_ref, 'stop_entropy_diagnostics_collection', None))
+            and callable(getattr(model_ref, 'save_entropy_diagnostics_csv', None))
+        )
+
+        if collect_entropy:
+            model_ref.start_entropy_diagnostics_collection(reset=True)
+            print("Entropy diagnostics collection started.")
+
         if not os.path.exists(folder_path):
             os.makedirs(folder_path)
 
@@ -260,6 +274,14 @@ class Exp_Long_Term_Forecast(Exp_Basic):
 
         preds = np.concatenate(preds, axis=0)
         trues = np.concatenate(trues, axis=0)
+
+        # ==========================================
+        # Stop entropy diagnostics collection
+        # ==========================================
+        if collect_entropy:
+            model_ref.stop_entropy_diagnostics_collection()
+            print("Entropy diagnostics collection stopped.")
+
         print('test shape:', preds.shape, trues.shape)
         preds = preds.reshape(-1, preds.shape[-2], preds.shape[-1])
         trues = trues.reshape(-1, trues.shape[-2], trues.shape[-1])
@@ -269,6 +291,20 @@ class Exp_Long_Term_Forecast(Exp_Basic):
         folder_path = './results/' + setting + '/'
         if not os.path.exists(folder_path):
             os.makedirs(folder_path)
+
+        # ==========================================
+        # Save entropy diagnostics
+        # ==========================================
+        if collect_entropy:
+            entropy_path = os.path.join(
+                folder_path,
+                f'entropy_diagnostics_pred{self.args.pred_len}_seed{self.args.seed}.csv'
+            )
+
+            model_ref.save_entropy_diagnostics_csv(entropy_path)
+
+            print("Saved entropy diagnostics:")
+            print(entropy_path)
 
         # ==========================================
         # Save scale weights
