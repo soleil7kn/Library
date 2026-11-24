@@ -6,7 +6,7 @@ set -euo pipefail
 export CUDA_VISIBLE_DEVICES=0
 export CUBLAS_WORKSPACE_CONFIG=:4096:8
 
-model_name=EADT
+model_name=EADT_V
 
 # 実験ごとに異なるログ保存先を作成
 log_dir="logs/${model_name}_ECL_$(date +%Y%m%d_%H%M%S)"
