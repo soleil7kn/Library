@@ -60,8 +60,8 @@ run_exp() {
     python -u run.py "${args[@]}" 2>&1 | tee "$log_file"
 }
 
-# 1つの乱数シードで実験
-for seed in 2026
+# 2つの乱数シードで実験
+for seed in 2024 2025
 do
 
     echo "======================================"
