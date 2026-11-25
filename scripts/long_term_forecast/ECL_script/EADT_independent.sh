@@ -6,7 +6,7 @@ set -euo pipefail
 export CUDA_VISIBLE_DEVICES=0
 export CUBLAS_WORKSPACE_CONFIG=:4096:8
 
-model_name=TimeXer_EADT_top-p
+model_name=EADT_independent
 
 # 実験ごとに異なるログ保存先を作成
 log_dir="logs/${model_name}_ECL_$(date +%Y%m%d_%H%M%S)"
@@ -45,8 +45,6 @@ run_exp() {
         --des "seed${seed}"
         --random_seed "$seed"
         --itr 1
-        --use_top_p_attention 
-        --p_attention 0.8
     )
 
     # d_ffが指定されている場合だけ追加
