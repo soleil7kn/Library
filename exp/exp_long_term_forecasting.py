@@ -174,6 +174,12 @@ class Exp_Long_Term_Forecast(Exp_Basic):
         preds = []
         trues = []
 
+        # Gate diagnostics
+        spectral_gate_list = []
+        attention_gate_list = []
+        spectral_entropy_list = []
+        attention_entropy_list = []
+
         # ==========================================
         # Scale weight collection
         # ==========================================
@@ -226,6 +232,32 @@ class Exp_Long_Term_Forecast(Exp_Basic):
                         outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
                 else:
                     outputs = self.model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
+
+
+                # ==========================================
+                # Collect Gate Diagnostics
+                # ==========================================
+                def collect_gate(attr_name, target_list):
+                    value = getattr(model_ref, attr_name, None)
+
+                    if value is not None and torch.is_tensor(value):
+                        target_list.append(
+                            value.detach().float().cpu().numpy()
+                        )
+
+                collect_gate('last_spectral_gate', spectral_gate_list)
+                collect_gate('last_attention_gate', attention_gate_list)
+
+                collect_gate(
+                    'last_spectral_entropy_by_var',
+                    spectral_entropy_list
+                )
+
+                collect_gate(
+                    'last_attention_entropy',
+                    attention_entropy_list
+                )
+
                 
                 # ==========================================
                 # Collect scale weights
@@ -445,5 +477,101 @@ class Exp_Long_Term_Forecast(Exp_Basic):
         np.save(folder_path + 'metrics.npy', np.array([mae, mse, rmse, mape, mspe]))
         np.save(folder_path + 'pred.npy', preds)
         np.save(folder_path + 'true.npy', trues)
+
+        # ==========================================
+        # Save Gate Diagnostics
+        # ==========================================
+
+        def save_gate(name, values):
+
+            if len(values) == 0:
+                print(f'WARNING: {name} not collected')
+                return None
+
+            arrays = []
+
+            for x in values:
+                x = np.asarray(x)
+
+                if x.ndim == 1:
+                    x = x.reshape(-1, 1)
+                else:
+                    x = x.reshape(-1, x.shape[-1])
+
+                arrays.append(x)
+
+            all_values = np.concatenate(arrays, axis=0)
+
+            # Save all values
+            np.save(
+                os.path.join(folder_path, f'{name}_all.npy'),
+                all_values
+            )
+
+            # Statistics
+            mean = all_values.mean(axis=0)
+            std = all_values.std(axis=0)
+            min_val = all_values.min(axis=0)
+            max_val = all_values.max(axis=0)
+
+            data = np.column_stack([
+                np.arange(len(mean)),
+                mean,
+                std,
+                min_val,
+                max_val
+            ])
+
+            np.savetxt(
+                os.path.join(folder_path, f'{name}_statistics.csv'),
+                data,
+                delimiter=',',
+                header='dimension,mean,std,min,max',
+                comments='',
+                fmt=['%d', '%.8f', '%.8f', '%.8f', '%.8f']
+            )
+
+            print(f'\n===== {name} =====')
+            print('Mean:', all_values.mean())
+            print('Std :', all_values.std())
+            print('Min :', all_values.min())
+            print('Max :', all_values.max())
+
+            return all_values
+
+
+        all_se = save_gate('spectral_gate', spectral_gate_list)
+        all_ae = save_gate('attention_gate', attention_gate_list)
+
+        save_gate('spectral_entropy', spectral_entropy_list)
+        save_gate('attention_entropy', attention_entropy_list)
+
+
+        # Spectral Gate: variable-wise variation
+        if all_se is not None:
+
+            print('\nSpectral Gate variation across variables:')
+            print(
+                'Mean std:',
+                all_se.std(axis=1).mean()
+            )
+
+            print('\nSpectral Gate variation across samples:')
+
+            for j in range(all_se.shape[1]):
+                print(
+                    f'Variable {j}: '
+                    f'Std={all_se[:, j].std():.6f}'
+                )
+
+
+        # Attention Gate: sample-wise variation
+        if all_ae is not None:
+
+            print('\nAttention Gate variation:')
+            print(
+                'Std across samples:',
+                all_ae.std(axis=0).mean()
+            )
 
         return
