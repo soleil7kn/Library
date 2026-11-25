@@ -45,6 +45,8 @@ run_exp() {
         --des "seed${seed}"
         --random_seed "$seed"
         --itr 1
+        --use_top_p_attention 
+        --p_attention 0.8
     )
 
     # d_ffが指定されている場合だけ追加

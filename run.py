@@ -226,6 +226,19 @@ if __name__ == '__main__':
     type=int,
     default=None
     )
+    
+    # top-p用
+    parser.add_argument(
+    '--use_top_p_attention',
+    action='store_true',
+    default=False
+    )
+
+    parser.add_argument(
+        '--p_attention',
+        type=float,
+        default=0.9
+    )
 
     # ランダムシードの設定
     parser.add_argument('--random_seed', type=int, default=2026)
