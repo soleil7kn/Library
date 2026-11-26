@@ -42,7 +42,7 @@ DATASETS = {
 WINDOW_DAYS = 7
 STRIDE_DAYS = 1
 
-OUTPUT_DIR = Path("../correlation_stability_results")
+OUTPUT_DIR = Path("./correlation_stability_results")
 
 # CoV calculation: avoid division by near-zero mean correlation
 COV_EPSILON = 0.05
