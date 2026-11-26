@@ -32,6 +32,10 @@ DATASETS = {
         "path": "../dataset/ETT-small/ETTm2.csv",
         "interval_minutes": 15,
     },
+    "ECL":{  
+        "path": "../dataset/electricity/electricity.csv",
+        "interval_minutes": 60,
+    }
 }
 
 
